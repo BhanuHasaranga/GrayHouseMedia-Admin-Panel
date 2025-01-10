@@ -1,0 +1,37 @@
+// Prisma schema with relation between albums and urls
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model albums {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String
+  type        String
+  status      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  // Define a one-to-many relation with urls
+  urls        urls[]    // One album can have many urls
+}
+
+model urls {
+  id          Int       @id @default(autoincrement())
+  url         String
+  thumbnail   String?
+  status      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  // Define a many-to-one relation with albums
+  album       albums    @relation(fields: [albumId], references: [id])
+  albumId     Int       // Foreign key referencing the album id
+}
+
+
+// npx prisma migrate dev
